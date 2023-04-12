@@ -1,16 +1,10 @@
 import { useEffect, useState } from 'react';
-import {
-  Button,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
 const StarterForm = () => {
   const [players, setPlayers] = useState(0);
+
   const navigation = useNavigation();
   useEffect(() => {
     if (players > 0) {

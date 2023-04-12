@@ -4,17 +4,23 @@ import Starterform from './components/starter/starterform';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AssignRoles from './components/starter/AssignRoles';
-
+import TeamContext from './context/teamcontext';
+import { useState } from 'react';
+import InitialTeam from './components/game/initialTeam';
 export default function App() {
   const Stack = createNativeStackNavigator();
+  const [team, setTeam] = useState([1, 2]);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={Starterform} />
-        <Stack.Screen name="AssignRoles" component={AssignRoles} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <TeamContext.Provider value={{ team, setTeam }}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={Starterform} />
+          <Stack.Screen name="AssignRoles" component={AssignRoles} />
+          <Stack.Screen name="InitialTeam" component={InitialTeam} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </TeamContext.Provider>
   );
 }
 

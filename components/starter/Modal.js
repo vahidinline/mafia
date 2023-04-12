@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Modal, View, TextInput, Button, StyleSheet, Text } from 'react-native';
-
+import TeamContext from '../../context/teamcontext';
 const MyModal = ({ isVisible, onClose, onSubmit, role }) => {
   console.log('role', role);
   const [name, setName] = useState('');
-
+  const { team, setTeam } = useContext(TeamContext);
+  console.log(team);
   const handleNameChange = (text) => {
     setName(text);
   };
@@ -13,6 +14,7 @@ const MyModal = ({ isVisible, onClose, onSubmit, role }) => {
     onSubmit(name);
     setName('');
     onClose();
+    setTeam([...team, { name: name, role: role.alias }]);
   };
 
   return (
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     width: '60%',
   },
 });

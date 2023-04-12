@@ -12,15 +12,17 @@ import Mask from '../../assets/mask.jpeg';
 import { six, seven, eight } from '../../data/roles';
 import _ from 'lodash';
 import MyModal from './Modal';
+import { useNavigation } from '@react-navigation/native';
 
 const AssignRoles = ({ route }) => {
+  const navigator = useNavigation();
   const { players } = route.params;
   const [rolesArray, setRolesArray] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
   const [role, setRole] = useState();
   const [disabledButtonIds, setDisabledButtonIds] = useState([]);
-  console.log('role', role);
+
   const handleButtonClick = (role) => {
     setRole(role);
     setModalVisible(true);
@@ -76,9 +78,13 @@ const AssignRoles = ({ route }) => {
         onSubmit={handleNameSubmit}
       />
       {/* Render a button to trigger the modal */}
-      {/* <TouchableOpacity style={myStyle.button} onPress={handleButtonClick}>
-        <Text style={myStyle.buttonText}>Open Modal</Text>
-      </TouchableOpacity> */}
+      <TouchableOpacity
+        style={myStyle.button}
+        onPress={() => {
+          navigator.navigate('InitialTeam', { players });
+        }}>
+        <Text style={myStyle.buttonText}>شروع بازی</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
