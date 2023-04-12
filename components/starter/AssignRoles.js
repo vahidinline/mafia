@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   ScrollView,
@@ -5,30 +6,79 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import Mask from '../../assets/mask.jpeg';
-import roles from '../../data/roles';
+import { six, seven, eight } from '../../data/roles';
 import _ from 'lodash';
+import MyModal from './Modal';
 
 const AssignRoles = ({ route }) => {
   const { players } = route.params;
-  const EssentialRoles = _.filter(roles, (role) => role.essential);
-  const shuffledArray = _.shuffle(EssentialRoles);
-  console.log(shuffledArray);
+  const [rolesArray, setRolesArray] = useState([]);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [role, setRole] = useState();
+  const [disabledButtonIds, setDisabledButtonIds] = useState([]);
+  console.log('role', role);
+  const handleButtonClick = (role) => {
+    setRole(role);
+    setModalVisible(true);
+    setDisabledButtonIds([...disabledButtonIds, role.id]);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleNameSubmit = (name) => {
+    setUserName(name);
+    setModalVisible(false);
+  };
+
+  useEffect(() => {
+    if (players === 8) {
+      setRolesArray(_.shuffle(eight));
+    } else if (players === 7) {
+      setRolesArray(_.shuffle(seven));
+    } else if (players === 6) {
+      setRolesArray(_.shuffle(six));
+    }
+  }, [players]);
+
   return (
     <ScrollView>
       <Text>AssignRoles {players}</Text>
+
       <View style={myStyle.container}>
-        {/* {_.map(shuffledArray, (role) => (
+        {rolesArray?.map((role) => (
           <TouchableOpacity
             key={role.id}
             style={myStyle.item}
-            onPress={() => alert('You tapped the button!')}>
-            <Image source={Mask} style={{ width: 100, height: 100 }} />
-            <Text key={role.id}>{role.name}</Text>
+            onPress={() => handleButtonClick(role)} // Conditionally set onPress based on pressed status
+            disabled={disabledButtonIds.includes(role.id)}>
+            <Image
+              source={Mask}
+              style={[
+                myStyle.image,
+                disabledButtonIds.includes(role.id) && myStyle.disabledImage, // Apply disabledImage style when the button is disabled
+              ]}
+            />
           </TouchableOpacity>
-        ))} */}
+        ))}
       </View>
+
+      {/* Render the modal */}
+      <MyModal
+        role={role}
+        isVisible={isModalVisible}
+        onClose={handleCloseModal}
+        onSubmit={handleNameSubmit}
+      />
+      {/* Render a button to trigger the modal */}
+      {/* <TouchableOpacity style={myStyle.button} onPress={handleButtonClick}>
+        <Text style={myStyle.buttonText}>Open Modal</Text>
+      </TouchableOpacity> */}
     </ScrollView>
   );
 };
@@ -47,11 +97,29 @@ const myStyle = StyleSheet.create({
     margin: 10,
     alignItems: 'center',
   },
-
   text: {
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+  },
+  button: {
+    margin: 20,
+    padding: 10,
+    backgroundColor: 'blue',
+    borderRadius: 5,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    // Add your regular image styles here
+  },
+  disabledImage: {
+    opacity: 0.5, // Set opacity to create a semi-transparent overlay effect when the button is disabled
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 
