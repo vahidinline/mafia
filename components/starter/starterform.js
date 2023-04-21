@@ -1,16 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import TeamContext from '../../context/teamcontext';
+import PlayerContext from '../../context/playercontext';
 
 const StarterForm = () => {
-  const [players, setPlayers] = useState(0);
-
+  const { team, setTeam } = useContext(TeamContext);
+  const { initialPlayer, setInitialPlayer } = useContext(PlayerContext);
+  console.log(initialPlayer);
   const navigation = useNavigation();
-  useEffect(() => {
-    if (players > 0) {
-      navigation.navigate('AssignRoles', { players });
-    }
-  }, [players]);
 
   return (
     <View
@@ -19,28 +17,27 @@ const StarterForm = () => {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <Text>تعداد بازیکنان</Text>
+      <Text style={{ fontSize: 40, fontWeight: 'bold' }}>مافیاتبر</Text>
       <View style={styles.container}>
+        <Text># of Players {initialPlayer.length}</Text>
+        <Text># of roles {team.length}</Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
-            setPlayers(8);
-          }}>
-          <Text style={styles.text}>8 players</Text>
+          onPress={() =>
+            navigation.navigate('AssignRoles', {
+              team: team,
+            })
+          }>
+          <Text style={styles.text}>Assign Roles</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
-            setPlayers(7);
-          }}>
-          <Text style={styles.text}>7 players</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            setPlayers(6);
-          }}>
-          <Text style={styles.text}>6 players</Text>
+          onPress={() =>
+            navigation.navigate('initialPlayer', {
+              team: team,
+            })
+          }>
+          <Text style={styles.text}>New Team</Text>
         </TouchableOpacity>
       </View>
     </View>

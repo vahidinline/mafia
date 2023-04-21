@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { useContext, useEffect } from 'react';
 import TeamContext from '../../context/teamcontext';
 import { Button, DataTable } from 'react-native-paper';
@@ -11,7 +11,7 @@ const InitialTeam = () => {
   //     setTeam([]);
   //   }, []);
   return (
-    <View>
+    <ScrollView>
       <DataTable.Header>
         <DataTable.Title>اسم</DataTable.Title>
         <DataTable.Title>نقش</DataTable.Title>
@@ -21,8 +21,8 @@ const InitialTeam = () => {
           <View key={index}>
             <DataTable style={{ margin: 10 }}>
               <DataTable.Row>
-                <DataTable.Cell>{item.name}</DataTable.Cell>
-                <DataTable.Cell>{item.role}</DataTable.Cell>
+                <DataTable.Cell>{item.player}</DataTable.Cell>
+                <DataTable.Cell>{item.alias}</DataTable.Cell>
               </DataTable.Row>
             </DataTable>
           </View>
@@ -31,12 +31,12 @@ const InitialTeam = () => {
       <View>
         <Button
           mode="contained"
-          onPress={() => navigator.navigate('Game')}
+          onPress={() => navigator.navigate('night')}
           style={{ margin: 10 }}>
           شروع بازی
         </Button>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
