@@ -96,6 +96,30 @@ const eight = [
     investigated: false,
     gun: false,
   },
+  {
+    id: 10,
+    name: 'Villager',
+    alias: 'شهر ساده',
+    essential: true,
+    type: 'villager',
+    guard: false,
+    addable: true,
+    dead: false,
+    investigated: false,
+    gun: false,
+  },
+  {
+    id: 9,
+    name: 'Mafia',
+    alias: 'مافیا',
+    essential: false,
+    type: 'mafia',
+    guard: false,
+    addable: false,
+    dead: false,
+    investigated: false,
+    gun: false,
+  },
 ];
 
 export { eight };

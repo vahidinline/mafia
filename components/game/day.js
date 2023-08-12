@@ -4,123 +4,232 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Button, DataTable, Text } from 'react-native-paper';
+import { Card, DataTable, Text } from 'react-native-paper';
 import TeamContext from '../../context/teamcontext';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Icon } from '@rneui/base';
-import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
+import { Dialog, Icon, ListItem } from '@rneui/base';
 import { StyleSheet } from 'react-native';
+import CoutnDown from '../../components/timer';
+import { Button } from '@rneui/themed';
 
 const Day = () => {
   const { team, setTeam } = useContext(TeamContext);
-  console.log('team', team);
+  const [player, setPlayer] = useState({});
   const navigator = useNavigation();
-  const [isTimerStart, setIsTimerStart] = useState(false);
-  const [isStopwatchStart, setIsStopwatchStart] = useState(false);
-  const [timerDuration, setTimerDuration] = useState(30000);
-  const [resetTimer, setResetTimer] = useState(false);
-  const [resetStopwatch, setResetStopwatch] = useState(false);
-  return (
-    <ScrollView>
-      {team.map((item, index) => {
-        return (
-          <View key={index}>
-            <DataTable style={{ margin: 10 }}>
-              <DataTable.Row>
-                <DataTable.Cell>{item.player}</DataTable.Cell>
-                <DataTable.Cell>{item.alias}</DataTable.Cell>
-                <DataTable.Cell>
-                  {item.guard ? (
-                    <Icon name="shield" size={20} color="green" />
-                  ) : null}
-                </DataTable.Cell>
-                <DataTable.Cell>
-                  <Icon
-                    name="delete"
-                    onPress={() => {
-                      const newTeam = team.filter((item, i) => i !== index);
-                      setTeam(newTeam);
-                    }}
-                    size={20}
-                    color="red"
-                  />
-                </DataTable.Cell>
-              </DataTable.Row>
-            </DataTable>
-          </View>
-        );
-      })}
-      <Button
-        mode="contained"
-        onPress={() => navigator.navigate('night')}
-        style={{ margin: 10 }}>
-        شب
-      </Button>
-      <View style={styles.sectionStyle}>
-        <Text style={styles.title}>تایمر </Text>
-        <Timer
-          totalDuration={timerDuration}
-          msecs
-          //Time Duration
-          start={isTimerStart}
-          //To start
-          reset={resetTimer}
-          //To reset
-          options={options}
-          //options for the styling
-          handleFinish={() => {}}
-          //can call a function On finish of the time
-          getTime={(time) => {
-            console.log(time);
-          }}
-        />
-        <TouchableHighlight
-          onPress={() => {
-            setIsTimerStart(!isTimerStart);
-            setResetTimer(false);
-          }}>
-          <Text style={styles.buttonText}>
-            {!isTimerStart ? 'شروع' : 'توقف'}
-          </Text>
-        </TouchableHighlight>
-        <TouchableHighlight
-          onPress={() => {
-            setIsTimerStart(false);
-            setResetTimer(true);
-          }}>
-          <Text style={styles.buttonText}>ریست</Text>
-        </TouchableHighlight>
-      </View>
-      <Button
-        mode="contained"
-        onPress={() => navigator.navigate('card')}
-        style={{ margin: 10 }}>
-        کارت ها
-      </Button>
-      <Button
-        mode="contained"
-        onPress={() => navigator.navigate('InitialTeam')}
-        style={{ margin: 10 }}>
-        برگشت{' '}
-      </Button>
-    </ScrollView>
-  );
-};
+  const [visibleDialog, setVisibleDialog] = useState(false);
 
-const options = {
-  container: {
-    backgroundColor: '#FF0000',
-    padding: 5,
-    borderRadius: 5,
-    width: 200,
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 25,
-    color: '#FFF',
-    marginLeft: 7,
-  },
+  const [tempIndex, setTempIndex] = useState(0);
+  const toggleDialog = (item, index) => {
+    setPlayer(item);
+    setTempIndex(index);
+    setVisibleDialog(!visibleDialog);
+  };
+
+  const faceOff = (alias) => {
+    //شadd removed to the player object
+    const newPlayer = {
+      ...player,
+      alias: alias,
+      type: player.type === 'mafia' ? 'villager' : 'mafia',
+    };
+
+    // replace the old player with the new player
+    const newTeam = team.map((item, index) => {
+      if (index === tempIndex) {
+        return newPlayer;
+      }
+      return item;
+    });
+
+    setTeam(newTeam);
+  };
+
+  const removePlayer = () => {
+    // شadd removed to the player object
+    const newPlayer = { ...player, removed: true };
+    // replace the old player with the new player
+    const newTeam = team.map((item, index) => {
+      if (index === tempIndex) {
+        return newPlayer;
+      }
+      return item;
+    });
+
+    setTeam(newTeam);
+  };
+
+  const filteredData = team.filter((item) => item.removed !== true);
+
+  return (
+    <View>
+      <ScrollView>
+        {/* make space in bottom */}
+
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: '#fff',
+            backgroundColor: '#5A5A5A',
+            padding: 10,
+            margin: 10,
+          }}>
+          {filteredData.length} Players
+        </Text>
+        {team.map((item, index) => {
+          return (
+            <View key={index}>
+              <Card
+                style={{
+                  margin: 10,
+                  padding: 10,
+                  backgroundColor: '#F86F03',
+                  //bottom: 200,
+                }}>
+                <Card.Title
+                  title={item.player}
+                  titleStyle={{ color: '#fff', fontWeight: 'bold' }}
+                  subtitle={
+                    item.removed ? (
+                      <Text style={{ color: 'red', fontWeight: 'bold' }}>
+                        Eliminated
+                      </Text>
+                    ) : null
+                  }
+                />
+                {/* <Text
+                  style={{
+                    textAlign: 'center',
+                    fontSize: 20,
+                    color: '#fff',
+                    backgroundColor: '#5A5A5A',
+                    padding: 10,
+                    margin: 10,
+                  }}>
+                  {item.alias}
+                </Text> */}
+                <Card.Content>
+                  <Button
+                    containerStyle={{
+                      //height: 10,
+                      width: '60%',
+                      //marginHorizontal: 50,
+                      // marginVertical: 10,
+                    }}
+                    titleStyle={{
+                      fontSize: 15,
+                      fontWeight: 'bold',
+                      color: '#fff',
+                    }}
+                    buttonStyle={{ backgroundColor: '#525FE1' }}
+                    onPress={() => {
+                      toggleDialog(item, index);
+                    }}>
+                    Player Info
+                    <Icon
+                      name="chevron-forward"
+                      type="ionicon"
+                      size={20}
+                      color="#fff"
+                      iconStyle={{
+                        justifyContent: 'flex-end',
+                      }}
+                    />
+                  </Button>
+                </Card.Content>
+                <CoutnDown />
+              </Card>
+            </View>
+          );
+        })}
+
+        <Dialog
+          overlayStyle={{
+            backgroundColor: '#fff',
+          }}
+          isVisible={visibleDialog}
+          onBackdropPress={toggleDialog}>
+          <Dialog.Title title={player.player} />
+          {!player.removed ? (
+            <ListItem
+              bottomDivider
+              onPress={() => {
+                removePlayer(player);
+                setVisibleDialog(!visibleDialog);
+              }}>
+              <Icon name="delete" size={30} color="red" />
+              <ListItem.Content>
+                <ListItem.Title>Remove</ListItem.Title>
+                {/* check if player removed from list then show msg */}
+              </ListItem.Content>
+              <ListItem.Chevron />
+            </ListItem>
+          ) : (
+            <ListItem bottomDivider>
+              <Icon name="delete" size={30} color="red" />
+              <ListItem.Content>
+                <ListItem.Title>
+                  {player.player} has been Eliminated
+                </ListItem.Title>
+                {/* check if player removed from list then show msg */}
+              </ListItem.Content>
+            </ListItem>
+          )}
+          <ListItem
+            bottomDivider
+            containerStyle={{
+              backgroundColor: player.removed ? 'gray' : 'green',
+            }}>
+            <Icon name="person" size={30} color="#fff" />
+            <ListItem.Content>
+              <ListItem.Title
+                style={{
+                  color: '#fff',
+                }}>
+                {player.player} {player.removed ? 'was' : 'is'} {player.name}
+              </ListItem.Title>
+              {/* check if player removed from list then show msg */}
+            </ListItem.Content>
+          </ListItem>
+          <ListItem bottomDivider>
+            <Icon name="person" size={30} color="#fff" />
+            <ListItem.Content>
+              <ListItem.Title
+                onPress={() => {
+                  faceOff('faced off');
+                  setVisibleDialog(!visibleDialog);
+                }}
+                style={{
+                  color: '#000',
+                }}>
+                Face Off {player.type}
+              </ListItem.Title>
+              {/* check if player removed from list then show msg */}
+            </ListItem.Content>
+          </ListItem>
+        </Dialog>
+        <View>
+          <Button
+            containerStyle={{
+              height: 70,
+              width: '100%',
+              //marginHorizontal: 50,
+              // marginVertical: 10,
+            }}
+            titleStyle={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              color: '#fff',
+            }}
+            buttonStyle={{ backgroundColor: 'rgba(255, 193, 7, 1)' }}>
+            Night
+          </Button>
+        </View>
+      </ScrollView>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -141,6 +250,7 @@ const styles = StyleSheet.create({
     marginTop: 32,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
   },
   buttonText: {
     fontSize: 20,

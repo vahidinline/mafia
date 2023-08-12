@@ -1,5 +1,11 @@
-import { ScrollView, TouchableOpacity, View, StyleSheet } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import {
+  ScrollView,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
+import { Appbar, Button, Text } from 'react-native-paper';
 import { eight } from '../../data/roles';
 import { useContext, useEffect, useState } from 'react';
 import PlayerContext from '../../context/playercontext';
@@ -8,11 +14,13 @@ import { useNavigation } from '@react-navigation/native';
 
 const CreateListOfRoles = () => {
   const { team, setTeam } = useContext(TeamContext);
+  const { initialPlayer, setInitialPlayer } = useContext(PlayerContext);
+
   const navigation = useNavigation();
 
-  useEffect(() => {
-    setTeam([]);
-  }, []);
+  // useEffect(() => {
+  //   setTeam([]);
+  // }, []);
 
   const handleItemAdd = (item) => {
     const isAllowedMultipleTimes = item.addable === true;
@@ -39,14 +47,38 @@ const CreateListOfRoles = () => {
   };
 
   const handleItemRemove = (role) => {
+    console.log('role', role);
     setTeam((prevItems) =>
       prevItems.filter((prevItem) => prevItem.id !== role.id)
     );
     setTeam((prevItems) => [...prevItems, role]);
   };
 
+  const handleNext = () => {
+    if (team.length === initialPlayer.length) {
+      navigation.navigate('Home');
+    } else {
+      alert('Please assign all roles');
+    }
+  };
+
   return (
-    <>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: '#FFA41B',
+      }}>
+      <Appbar.Header
+        style={{
+          backgroundColor: '#525FE1',
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0.5,
+          borderBottomColor: '#ccc',
+        }}>
+        <Appbar.BackAction color="white" onPress={() => navigation.goBack()} />
+        <Appbar.Content color="white" title="Roles" />
+      </Appbar.Header>
       <ScrollView
         contentContainerStyle={{
           //flex: 1,
@@ -57,7 +89,7 @@ const CreateListOfRoles = () => {
         <View style={styles.container}>
           {eight.map((role, i) => (
             <TouchableOpacity
-              key={i}
+              key={role.id}
               style={styles.button}
               onPress={() => handleItemAdd(role)}>
               <Text style={styles.buttonText}>{role.name}</Text>
@@ -67,7 +99,7 @@ const CreateListOfRoles = () => {
         <View style={styles.container}>
           {team?.map((role, i) => (
             <TouchableOpacity
-              key={i}
+              key={role.id}
               style={styles.button}
               onPress={() => handleItemRemove(role)}>
               <Text style={styles.buttonText}>{role.name}</Text>
@@ -75,37 +107,51 @@ const CreateListOfRoles = () => {
           ))}
         </View>
       </ScrollView>
-      <Button
-        mode="contained"
-        style={{ margin: 10 }}
-        onPress={() => {
-          navigation.navigate('Home');
-        }}>
-        <Text
+      <View style={{ backgroundColor: '#525FE1' }}>
+        <Button
+          mode="contained"
           style={{
-            color: 'white',
+            margin: 10,
+            backgroundColor: '#525FE1',
+            borderRadius: 1,
+            marginBottom: 20,
+          }}
+          onPress={() => {
+            handleNext();
           }}>
-          Next
-        </Text>
-      </Button>
-    </>
+          <Text
+            style={{
+              color: 'white',
+              fontSize: 20,
+
+              fontWeight: 'bold',
+            }}>
+            Next
+          </Text>
+        </Button>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     width: '50%',
+    //backgroundColor: '#FFA41B',
+    height: Dimensions.get('window').height,
   },
   button: {
-    borderColor: 'gray',
+    borderColor: '#fff',
     borderWidth: 1,
     padding: 10,
     margin: 10,
-    borderRadius: 15,
+    borderRadius: 5,
   },
   buttonText: {
     fontSize: 20,
-    color: '#000',
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   list: {
     width: '100%',

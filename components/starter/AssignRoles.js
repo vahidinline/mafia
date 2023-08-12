@@ -13,21 +13,24 @@ import _ from 'lodash';
 import MyModal from './Modal';
 import { useNavigation } from '@react-navigation/native';
 import PlayerContext from '../../context/playercontext';
+import TeamContext from '../../context/teamcontext';
+import { Appbar, Button } from 'react-native-paper';
 
-const AssignRoles = ({ route }) => {
+const AssignRoles = () => {
   const navigator = useNavigation();
-  const { team } = route.params;
-  const { initialPlayer } = useContext(PlayerContext);
+  const { team, setTeam } = useContext(TeamContext);
+  const { initialPlayer, setInitialPlayer } = useContext(PlayerContext);
   const [rolesArray, setRolesArray] = useState([]);
+
   const [isModalVisible, setModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
   const [role, setRole] = useState();
   const [disabledButtonIds, setDisabledButtonIds] = useState([]);
   const [buttondisable, setButtondisable] = useState(true);
-  console.log('disabledButtonIds', disabledButtonIds.length);
-
+  console.log(team.length, disabledButtonIds.length);
+  console.log('buttondisable', buttondisable);
   useEffect(() => {
-    if (disabledButtonIds.length === team.length) {
+    if (disabledButtonIds.length == team.length) {
       console.log('equal');
       setButtondisable(false);
     }
@@ -48,13 +51,27 @@ const AssignRoles = ({ route }) => {
     setModalVisible(false);
   };
 
-  useEffect(() => {}, [rolesArray]);
-
   return (
-    <>
-      <ScrollView style={{ backgroundColor: '#fff' }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: '#FFA41B',
+      }}>
+      <Appbar.Header
+        style={{
+          backgroundColor: '#525FE1',
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0.5,
+          borderBottomColor: '#ccc',
+        }}>
+        <Appbar.BackAction color="white" onPress={() => navigator.goBack()} />
+        <Appbar.Content color="white" title="Start" />
+      </Appbar.Header>
+
+      <ScrollView style={{ backgroundColor: '#FFA41B' }}>
         <View style={myStyle.container}>
-          {team?.map((role, i) => (
+          {_.shuffle(team)?.map((role, i) => (
             <TouchableOpacity
               key={i}
               style={myStyle.item}
@@ -67,13 +84,16 @@ const AssignRoles = ({ route }) => {
                   disabledButtonIds.includes(role.id) && myStyle.disabledImage, // Apply disabledImage style when the button is disabled
                 ]}
               />
+              {/* <Text style={[myStyle.text]}>
+                {role.alias}-{role.player}
+              </Text> */}
             </TouchableOpacity>
           ))}
-          {team.map((role, i) => (
+          {/* {team.map((role, i) => (
             <Text key={i} style={[myStyle.text]}>
               {role.alias}-{role.player}
             </Text>
-          ))}
+          ))} */}
         </View>
 
         {/* Render the modal */}
@@ -88,35 +108,20 @@ const AssignRoles = ({ route }) => {
 
       <View
         style={{
-          flex: 1,
           flexDirection: 'row',
-          backgroundColor: '#fff',
           justifyContent: 'center',
         }}>
-        <TouchableOpacity
-          style={myStyle.button}
-          onPress={() => {
-            navigator.reset({
-              index: 0,
-              routes: [{ name: 'Home' }],
-            });
-          }}>
-          <Text style={myStyle.buttonText}>بازگشت</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+        <Button
           style={
-            disabledButtonIds.length !== rolesArray.length
-              ? myStyle.button
-              : myStyle.buttonDisabled
+            buttondisable == false ? myStyle.button : myStyle.buttonDisabled
           }
-          //disabled={disabledButtonIds.length === team.length ? true : false}
           onPress={() => {
             navigator.navigate('InitialTeam');
           }}>
-          <Text style={myStyle.buttonText}>شروع بازی</Text>
-        </TouchableOpacity>
+          <Text style={myStyle.buttonText}>Start the Game</Text>
+        </Button>
       </View>
-    </>
+    </View>
   );
 };
 
@@ -125,13 +130,14 @@ const myStyle = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: '#fff',
   },
   item: {
-    width: '40%',
-    margin: 15,
+    width: '20%',
+    margin: 10,
+    backgroundColor: '#fff',
     alignItems: 'center',
   },
   text: {
@@ -141,10 +147,10 @@ const myStyle = StyleSheet.create({
   },
   button: {
     width: '50%',
-    height: 50,
-    margin: 20,
+    height: 60,
+    margin: 10,
     padding: 10,
-    backgroundColor: 'blue',
+    backgroundColor: '#525FE1',
     borderRadius: 5,
   },
   buttonDisabled: {
@@ -153,11 +159,11 @@ const myStyle = StyleSheet.create({
     padding: 10,
     backgroundColor: 'gray',
     borderRadius: 5,
-    height: 50,
+    height: 60,
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 50,
+    height: 50,
     // Add your regular image styles here
   },
   disabledImage: {
@@ -165,7 +171,7 @@ const myStyle = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 20,
     textAlign: 'center',
   },
 });

@@ -1,9 +1,10 @@
 import { ScrollView, Text, View } from 'react-native';
 import { useContext, useEffect } from 'react';
 import TeamContext from '../../context/teamcontext';
-import { Button, DataTable } from 'react-native-paper';
+import { Appbar, Button, DataTable } from 'react-native-paper';
 import { RadioButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import App from '../../App';
 const InitialTeam = () => {
   const navigator = useNavigation();
   const { team, setTeam } = useContext(TeamContext);
@@ -12,6 +13,18 @@ const InitialTeam = () => {
   //   }, []);
   return (
     <ScrollView>
+      <Appbar.Header
+        style={{
+          backgroundColor: '#525FE1',
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0.5,
+          borderBottomColor: '#ccc',
+        }}>
+        <Appbar.BackAction color="white" onPress={() => navigator.goBack()} />
+        <Appbar.Content color="white" title="List" />
+      </Appbar.Header>
+
       <DataTable.Header>
         <DataTable.Title>اسم</DataTable.Title>
         <DataTable.Title>نقش</DataTable.Title>
@@ -31,9 +44,9 @@ const InitialTeam = () => {
       <View>
         <Button
           mode="contained"
-          onPress={() => navigator.navigate('night')}
-          style={{ margin: 10 }}>
-          شروع بازی
+          onPress={() => navigator.navigate('game')}
+          style={{ margin: 10, backgroundColor: 'green', borderRadius: 1 }}>
+          Start{' '}
         </Button>
       </View>
     </ScrollView>
