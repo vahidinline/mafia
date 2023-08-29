@@ -3,30 +3,41 @@ import { useContext, useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, View } from 'react-native';
 import CardContext from '../../context/cardcontext';
+import { Badge } from 'react-native-paper';
 
 const Cards = () => {
   const { card, setCard } = useContext(CardContext);
   const [show, setShow] = useState(false);
+  const [description, setDescription] = useState('');
+  const [name, setName] = useState('');
+
   const handleCards = (item) => {
-    console.log('item', item);
+    setDescription(item.desc);
+    setName(item.name);
     setCard(card.filter((card) => card !== item));
   };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>کارت ها</Text>
+
       <View style={styles.cardContainer}>
         {_.shuffle(card).map((item, index) => {
           return (
             <View key={index} style={styles.card}>
               <TouchableOpacity onPress={() => handleCards(item)}>
-                <Text style={styles.cardText}>
-                  {index + 1}-{item.name}{' '}
-                </Text>
+                <Badge
+                  style={{ backgroundColor: '#525FE1', color: '#fff' }}
+                  size={50}>
+                  {index + 1}
+                </Badge>
               </TouchableOpacity>
             </View>
           );
         })}
       </View>
+      <Text style={styles.cardText}>{name} </Text>
+      <Text>{description}</Text>
+      <View></View>
     </View>
   );
 };
@@ -61,7 +72,6 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 20,
-    fontWeight: 'bold',
   },
 });
 

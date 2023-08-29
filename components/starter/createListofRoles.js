@@ -77,7 +77,7 @@ const CreateListOfRoles = () => {
           borderBottomColor: '#ccc',
         }}>
         <Appbar.BackAction color="white" onPress={() => navigation.goBack()} />
-        <Appbar.Content color="white" title="Roles" />
+        <Appbar.Content color="white" title="انتخاب نقش ها" />
       </Appbar.Header>
       <ScrollView
         contentContainerStyle={{
@@ -87,22 +87,24 @@ const CreateListOfRoles = () => {
           //flexWrap: 'wrap',
         }}>
         <View style={styles.container}>
+          <Text>{initialPlayer.length}</Text>
           {eight.map((role, i) => (
             <TouchableOpacity
               key={role.id}
               style={styles.button}
               onPress={() => handleItemAdd(role)}>
-              <Text style={styles.buttonText}>{role.name}</Text>
+              <Text style={styles.buttonText}>{role.alias}</Text>
             </TouchableOpacity>
           ))}
         </View>
         <View style={styles.container}>
+          <Text>{team.length}</Text>
           {team?.map((role, i) => (
             <TouchableOpacity
               key={role.id}
               style={styles.button}
               onPress={() => handleItemRemove(role)}>
-              <Text style={styles.buttonText}>{role.name}</Text>
+              <Text style={styles.buttonText}>{role.alias}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -126,7 +128,7 @@ const CreateListOfRoles = () => {
 
               fontWeight: 'bold',
             }}>
-            Next
+            مرحله بعد
           </Text>
         </Button>
       </View>
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 10,
     color: '#fff',
     textAlign: 'center',
     fontWeight: 'bold',

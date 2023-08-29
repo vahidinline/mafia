@@ -89,185 +89,223 @@ const Night = () => {
   //   });
   // };
 
-  return (
-    <ScrollView style={{ backgroundColor: '#5A5A5A' }}>
-      {team.map((item, index) => {
-        return (
-          <View key={index}>
-            <Card
-              style={{
-                margin: 10,
-                padding: 10,
-                backgroundColor: '#5A5A5A',
-              }}>
-              <Card.Title
-                titleStyle={{
-                  fontSize: 20,
-                  fontWeight: 'bold',
-                  color: '#eee',
-                }}
-                title={item.player}
-                subtitle={
-                  item.removed ? (
-                    <Text style={{ color: 'red', fontWeight: 'bold' }}>
-                      Eliminated
-                    </Text>
-                  ) : null
-                }
-              />
+  const telesm = () => {
+    // شadd removed to the player object
+    const newPlayer = { ...player, spell: true };
+    // replace the old player with the new player
+    const newTeam = team.map((item, index) => {
+      if (index === tempIndex) {
+        return newPlayer;
+      }
+      return item;
+    });
 
-              <Card.Content>
-                <Icon
-                  name={blocked.includes(item.name) ? 'lock' : 'lock-open'}
-                  type="material"
-                  size={30}
-                  color="white"
-                />
-                <Button
-                  containerStyle={{
-                    height: 70,
-                    width: '100%',
-                    //marginHorizontal: 50,
-                    // marginVertical: 10,
-                  }}
+    setTeam(newTeam);
+  };
+
+  return (
+    <View style={{ backgroundColor: '#5A5A5A' }}>
+      <ScrollView>
+        {team.map((item, index) => {
+          return (
+            <View key={index}>
+              <Card
+                style={{
+                  margin: 10,
+                  padding: 10,
+                  backgroundColor: '#5A5A5A',
+                }}>
+                <Card.Title
                   titleStyle={{
                     fontSize: 20,
                     fontWeight: 'bold',
-                    color: '#fff',
+                    color: '#eee',
                   }}
-                  buttonStyle={{ backgroundColor: 'rgba(255, 193, 7, 1)' }}
-                  onPress={() => {
-                    toggleDialog(item, index);
-                  }}>
-                  <Text style={{ color: '#fff' }}>Action</Text>
+                  title={item.player}
+                  subtitle={
+                    item.removed ? (
+                      <Text style={{ color: 'red', fontWeight: 'bold' }}>
+                        Eliminated
+                      </Text>
+                    ) : null
+                  }
+                />
 
+                <Card.Content>
                   <Icon
-                    name="chevron-forward"
-                    type="ionicon"
-                    size={25}
-                    color="#fff"
-                    iconStyle={{
-                      justifyContent: 'flex-end',
-                    }}
+                    name={blocked.includes(item.name) ? 'lock' : 'lock-open'}
+                    type="material"
+                    size={30}
+                    color="white"
                   />
-                </Button>
-              </Card.Content>
-            </Card>
-          </View>
-        );
-      })}
+                  <Button
+                    containerStyle={{
+                      height: 70,
+                      width: '100%',
+                      //marginHorizontal: 50,
+                      // marginVertical: 10,
+                    }}
+                    titleStyle={{
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: '#fff',
+                    }}
+                    buttonStyle={{ backgroundColor: 'rgba(255, 193, 7, 1)' }}
+                    onPress={() => {
+                      toggleDialog(item, index);
+                    }}>
+                    <Text style={{ color: '#fff' }}>Action</Text>
 
-      <Dialog
-        titleStyle={{ color: '#eee' }}
-        isVisible={visibleDialog}
-        onBackdropPress={toggleDialog}>
-        <Dialog.Title
-          title={`${player.player} 
+                    <Icon
+                      name="chevron-forward"
+                      type="ionicon"
+                      size={25}
+                      color="#fff"
+                      iconStyle={{
+                        justifyContent: 'flex-end',
+                      }}
+                    />
+                  </Button>
+                </Card.Content>
+              </Card>
+            </View>
+          );
+        })}
+
+        <Dialog
+          titleStyle={{ color: '#eee' }}
+          isVisible={visibleDialog}
+          onBackdropPress={toggleDialog}>
+          <Dialog.Title
+            title={`${player.player} 
           ${player.removed ? 'Eliminated' : ''}
           `}
-          style={{ color: '#eee' }}></Dialog.Title>
+            style={{ color: '#eee' }}></Dialog.Title>
 
-        {!player.removed ? (
+          {!player.removed ? (
+            <ListItem
+              bottomDivider
+              onPress={() => {
+                removePlayer(player);
+                setVisibleDialog(!visibleDialog);
+              }}>
+              <Icon name="delete" size={30} color="red" />
+              <ListItem.Content>
+                <ListItem.Title>Remove</ListItem.Title>
+                {/* check if player removed from list then show msg */}
+              </ListItem.Content>
+              <ListItem.Chevron />
+            </ListItem>
+          ) : (
+            <ListItem bottomDivider>
+              <Icon name="delete" size={30} color="red" />
+              <ListItem.Content>
+                <ListItem.Title>
+                  {player.player} has been Eliminated
+                </ListItem.Title>
+                {/* check if player removed from list then show msg */}
+              </ListItem.Content>
+            </ListItem>
+          )}
           <ListItem
             bottomDivider
             onPress={() => {
-              removePlayer(player);
+              savePlayer(player);
               setVisibleDialog(!visibleDialog);
             }}>
-            <Icon name="delete" size={30} color="red" />
+            <Icon name="heart" type="ionicon" size={30} color="red" />
             <ListItem.Content>
-              <ListItem.Title>Remove</ListItem.Title>
+              <ListItem.Title>Save</ListItem.Title>
               {/* check if player removed from list then show msg */}
             </ListItem.Content>
             <ListItem.Chevron />
           </ListItem>
-        ) : (
+          <ListItem
+            bottomDivider
+            onPress={() => {
+              telesm(player);
+              setVisibleDialog(!visibleDialog);
+            }}>
+            <Icon name="lock" type="ionicon" size={30} color="red" />
+            <ListItem.Content>
+              <ListItem.Title>spell</ListItem.Title>
+              {/* check if player removed from list then show msg */}
+            </ListItem.Content>
+            <ListItem.Chevron />
+          </ListItem>
           <ListItem bottomDivider>
-            <Icon name="delete" size={30} color="red" />
+            <Icon name="lock" size={30} color="red" />
             <ListItem.Content>
               <ListItem.Title>
-                {player.player} has been Eliminated
+                {player.player} has been enchanted
               </ListItem.Title>
               {/* check if player removed from list then show msg */}
             </ListItem.Content>
           </ListItem>
-        )}
-        <ListItem
-          bottomDivider
-          onPress={() => {
-            savePlayer(player);
-            setVisibleDialog(!visibleDialog);
-          }}>
-          <Icon name="heart" type="ionicon" size={30} color="red" />
-          <ListItem.Content>
-            <ListItem.Title>Save</ListItem.Title>
-            {/* check if player removed from list then show msg */}
-          </ListItem.Content>
-          <ListItem.Chevron />
-        </ListItem>
-        <ListItem
-          bottomDivider
-          onPress={() => {
-            blockPlayer(player);
-            setVisibleDialog(!visibleDialog);
-          }}>
-          <Icon name="block" type="material" size={30} color="gray" />
-          <ListItem.Content>
-            <ListItem.Title>Block ability</ListItem.Title>
-            {/* check if player removed from list then show msg */}
-          </ListItem.Content>
-          <ListItem.Chevron />
-        </ListItem>
-        {player.guard ? (
           <ListItem
             bottomDivider
             onPress={() => {
-              removeGuard(player);
+              blockPlayer(player);
               setVisibleDialog(!visibleDialog);
             }}>
-            <Icon name="shield" type="material" size={30} color="green" />
+            <Icon name="block" type="material" size={30} color="gray" />
             <ListItem.Content>
-              <ListItem.Title>Remove Gaurd</ListItem.Title>
+              <ListItem.Title>Block ability</ListItem.Title>
               {/* check if player removed from list then show msg */}
             </ListItem.Content>
             <ListItem.Chevron />
           </ListItem>
-        ) : (
-          <ListItem bottomDivider>
-            {/* add disable shield acon
-             */}
-
-            <Icon
-              name="remove-moderator"
-              type="material"
-              size={30}
-              color="gray"
-            />
-            <ListItem.Content>
-              <ListItem.Title>Has no Gaurd</ListItem.Title>
-              {/* check if player removed from list then show msg */}
-            </ListItem.Content>
-            <ListItem.Chevron />
-          </ListItem>
-        )}
-        <ListItem
-          bottomDivider
-          containerStyle={{
-            backgroundColor: player.removed ? 'gray' : 'green',
-          }}>
-          <Icon name="person" size={30} color="#fff" />
-          <ListItem.Content>
-            <ListItem.Title
-              style={{
-                color: '#fff',
+          {player.guard ? (
+            <ListItem
+              bottomDivider
+              onPress={() => {
+                removeGuard(player);
+                setVisibleDialog(!visibleDialog);
               }}>
-              {player.player} {player.removed ? 'was' : 'is'} {player.name}
-            </ListItem.Title>
-            {/* check if player removed from list then show msg */}
-          </ListItem.Content>
-        </ListItem>
-      </Dialog>
-    </ScrollView>
+              <Icon name="shield" type="material" size={30} color="green" />
+              <ListItem.Content>
+                <ListItem.Title>Remove Gaurd</ListItem.Title>
+                {/* check if player removed from list then show msg */}
+              </ListItem.Content>
+              <ListItem.Chevron />
+            </ListItem>
+          ) : (
+            <ListItem bottomDivider>
+              {/* add disable shield acon
+               */}
+
+              <Icon
+                name="remove-moderator"
+                type="material"
+                size={30}
+                color="gray"
+              />
+              <ListItem.Content>
+                <ListItem.Title>Has no Gaurd</ListItem.Title>
+                {/* check if player removed from list then show msg */}
+              </ListItem.Content>
+              <ListItem.Chevron />
+            </ListItem>
+          )}
+          <ListItem
+            bottomDivider
+            containerStyle={{
+              backgroundColor: player.removed ? 'gray' : 'green',
+            }}>
+            <Icon name="person" size={30} color="#fff" />
+            <ListItem.Content>
+              <ListItem.Title
+                style={{
+                  color: '#fff',
+                }}>
+                {player.player} {player.removed ? 'was' : 'is'} {player.name}
+              </ListItem.Title>
+              {/* check if player removed from list then show msg */}
+            </ListItem.Content>
+          </ListItem>
+        </Dialog>
+      </ScrollView>
+    </View>
   );
 };
 

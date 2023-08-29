@@ -169,7 +169,6 @@ export default function App() {
     // },
   ]);
   const [initialPlayer, setInitialPlayer] = useState([
-    'Vahid',
     'Majid',
     'Eli',
     'Hamed',
@@ -177,6 +176,10 @@ export default function App() {
     'TT',
     'Azi',
     'Sahel',
+    'Marmar',
+    'Mahta',
+    'Fahimeh',
+    'Esmaeil',
   ]);
   const [card, setCard] = useState(cards);
 
